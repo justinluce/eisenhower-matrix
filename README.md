@@ -2,4 +2,4 @@
 
 An in-progress to-do app that utilizes the Eisenhower Matrix.
 
-Created with Vite and React.js
+Created with React.js using Vite and Electron.js
