@@ -6,35 +6,7 @@ function App() {
   const [doTasks, setDoTasks] = useState([
     {
       id: "do0",
-      text: "this is the first task",
-    },
-    {
-      id: "do1",
-      text: "here is the second",
-    },
-    {
-      id: "do2",
-      text: "this is the first task",
-    },
-    {
-      id: "do3",
-      text: "here is the second",
-    },
-    {
-      id: "do4",
-      text: "this is the first task",
-    },
-    {
-      id: "do5",
-      text: "here is the second",
-    },
-    {
-      id: "do6",
-      text: "this is the first task",
-    },
-    {
-      id: "do7",
-      text: "here is the second",
+      text: "Edit task here",
     },
   ]);
   const [scheduleTasks, setScheduleTasks] = useState([]);
