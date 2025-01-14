@@ -1,12 +1,11 @@
-import { useEffect } from "react";
 import { useState } from "react";
 
-const NewTaskModal = ({ isOpen, onClose, taskList, updateList }) => {
+const NewTaskModal = ({ isOpen, onClose, taskList, updateList, listName }) => {
     const [name, setName] = useState("");
     console.log(taskList);
 
     const updateTaskList = () => {
-        const idString = taskList[0].id.slice(0, -1) + taskList.length;
+        const idString = listName + taskList.length;
         const newTask = {
             id: idString,
             text: name

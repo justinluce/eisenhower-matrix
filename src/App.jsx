@@ -15,6 +15,7 @@ function App() {
   const [showNewTaskModal, setShowNewTaskModal] = useState(false);
   const [currentTaskList, setCurrentTaskList] = useState();
   const [currentUpdateList, setCurrentUpdateList] = useState();
+  const [currentListName, setCurrentListName] = useState("");
 
   useEffect(() => {
     const savedTasks = JSON.parse(localStorage.getItem('tasks'));
@@ -47,7 +48,7 @@ function App() {
       <div className={`quadrant ${headerText}`}>
         <button
           className="add-task"
-          onClick={() => handleNewTask(taskList, updateList)}
+          onClick={() => handleNewTask(taskList, updateList, headerText)}
         >
           Add Task
         </button>
@@ -66,9 +67,10 @@ function App() {
     );
   };
   
-  const handleNewTask = (taskList, updateList) => {
+  const handleNewTask = (taskList, updateList, name) => {
     setCurrentTaskList(taskList)
     setCurrentUpdateList(() => updateList);
+    setCurrentListName(name);
     setShowNewTaskModal(true);
   }
 
@@ -81,6 +83,7 @@ function App() {
           onClose={() => {
             setShowNewTaskModal(false)
           }}
+          listName={currentListName}
           taskList={currentTaskList}
           updateList={currentUpdateList}
         />
