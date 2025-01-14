@@ -15,6 +15,25 @@ function App() {
   const [showNewTaskModal, setShowNewTaskModal] = useState(false);
   const [currentTaskList, setCurrentTaskList] = useState();
   const [currentUpdateList, setCurrentUpdateList] = useState();
+  const [currentListName, setCurrentListName] = useState("");
+
+  useEffect(() => {
+    const savedTasks = JSON.parse(localStorage.getItem('tasks'));
+    console.log(savedTasks);
+    if (savedTasks) {
+      setDoTasks(savedTasks.doTasks);
+      setScheduleTasks(savedTasks.scheduleTasks);
+      setDelegateTasks(savedTasks.delegateTasks);
+      setDeleteTasks(savedTasks.deleteTasks);
+    }
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      const tasks = { doTasks, scheduleTasks, delegateTasks, deleteTasks };
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }, 100);
+  }, [doTasks, scheduleTasks, delegateTasks, deleteTasks]);
 
   const Quadrant = ({ headerText, taskList, updateList }) => {
     const handleTextChange = (id, newText) => {
@@ -29,7 +48,7 @@ function App() {
       <div className={`quadrant ${headerText}`}>
         <button
           className="add-task"
-          onClick={() => handleNewTask(taskList, updateList)}
+          onClick={() => handleNewTask(taskList, updateList, headerText)}
         >
           Add Task
         </button>
@@ -48,9 +67,10 @@ function App() {
     );
   };
   
-  const handleNewTask = (taskList, updateList) => {
+  const handleNewTask = (taskList, updateList, name) => {
     setCurrentTaskList(taskList)
     setCurrentUpdateList(() => updateList);
+    setCurrentListName(name);
     setShowNewTaskModal(true);
   }
 
@@ -63,6 +83,7 @@ function App() {
           onClose={() => {
             setShowNewTaskModal(false)
           }}
+          listName={currentListName}
           taskList={currentTaskList}
           updateList={currentUpdateList}
         />
@@ -88,4 +109,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
