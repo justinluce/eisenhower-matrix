@@ -16,6 +16,24 @@ function App() {
   const [currentTaskList, setCurrentTaskList] = useState();
   const [currentUpdateList, setCurrentUpdateList] = useState();
 
+  useEffect(() => {
+    const savedTasks = JSON.parse(localStorage.getItem('tasks'));
+    console.log(savedTasks);
+    if (savedTasks) {
+      setDoTasks(savedTasks.doTasks);
+      setScheduleTasks(savedTasks.scheduleTasks);
+      setDelegateTasks(savedTasks.delegateTasks);
+      setDeleteTasks(savedTasks.deleteTasks);
+    }
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      const tasks = { doTasks, scheduleTasks, delegateTasks, deleteTasks };
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }, 100);
+  }, [doTasks, scheduleTasks, delegateTasks, deleteTasks]);
+
   const Quadrant = ({ headerText, taskList, updateList }) => {
     const handleTextChange = (id, newText) => {
       updateList((prevList) =>
@@ -88,4 +106,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
