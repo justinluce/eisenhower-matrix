@@ -1,0 +1,119 @@
+import React, { useEffect, useRef, useState } from 'react'
+import './App.css';
+import NewTaskModal from './NewTaskModal';
+
+function App() {
+  const [doTasks, setDoTasks] = useState([
+    {
+      id: "do0",
+      text: "this is the first task",
+    },
+    {
+      id: "do1",
+      text: "here is the second",
+    },
+    {
+      id: "do2",
+      text: "this is the first task",
+    },
+    {
+      id: "do3",
+      text: "here is the second",
+    },
+    {
+      id: "do4",
+      text: "this is the first task",
+    },
+    {
+      id: "do5",
+      text: "here is the second",
+    },
+    {
+      id: "do6",
+      text: "this is the first task",
+    },
+    {
+      id: "do7",
+      text: "here is the second",
+    },
+  ]);
+  const [scheduleTasks, setScheduleTasks] = useState([]);
+  const [delegateTasks, setDelegateTasks] = useState([]);
+  const [deleteTasks, setDeleteTasks] = useState([]);
+  const [showNewTaskModal, setShowNewTaskModal] = useState(false);
+  const [currentTaskList, setCurrentTaskList] = useState();
+  const [currentUpdateList, setCurrentUpdateList] = useState();
+
+  const Quadrant = ({ headerText, taskList, updateList }) => {
+    const handleTextChange = (id, newText) => {
+      updateList((prevList) =>
+        prevList.map((item) =>
+          item.id === id ? { ...item, text: newText } : item
+        )
+      );
+    };
+  
+    return (
+      <div className={`quadrant ${headerText}`}>
+        <button
+          className="add-task"
+          onClick={() => handleNewTask(taskList, updateList)}
+        >
+          Add Task
+        </button>
+        <h4>{headerText.charAt(0).toUpperCase() + headerText.slice(1)}</h4>
+        <ul>
+          {taskList.map((item) => (
+            <li key={item.id}>
+              <textarea
+                defaultValue={item.text}
+                onBlur={(e) => handleTextChange(item.id, e.target.value)}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+  
+  const handleNewTask = (taskList, updateList) => {
+    setCurrentTaskList(taskList)
+    setCurrentUpdateList(() => updateList);
+    setShowNewTaskModal(true);
+  }
+
+  return (
+    <div className='main'>
+      <div className='container'>
+      {showNewTaskModal && 
+        <NewTaskModal 
+          isOpen={showNewTaskModal}
+          onClose={() => {
+            setShowNewTaskModal(false)
+          }}
+          taskList={currentTaskList}
+          updateList={currentUpdateList}
+        />
+      }
+        <div className='top'>
+          <div className='important'><h3>Important</h3></div>
+          <div>
+            <h3>Urgent</h3>
+            <Quadrant headerText={'do'} taskList={doTasks} updateList={setDoTasks} />
+          </div>
+          <div>
+            <h3>Not Urgent</h3>
+            <Quadrant headerText={'schedule'} taskList={scheduleTasks} updateList={setScheduleTasks} />
+          </div>
+        </div>
+        <div className='bottom'>
+          <div className='notImportant'><h3>Not Important</h3></div>
+          <Quadrant headerText={'delegate'} taskList={delegateTasks} updateList={setDelegateTasks} />
+          <Quadrant headerText={'delete'} taskList={deleteTasks} updateList={setDeleteTasks} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default App

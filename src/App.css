@@ -1,0 +1,149 @@
+.main {
+  margin: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.quadrant {
+  width: 40vw;
+  height: 40vh;
+}
+
+.do {
+  background-color: hsl(109, 97%, 88%);
+  border-right: .2em solid black;
+  border-bottom: .2em solid black;
+}
+
+.schedule {
+  background-color: hsl(15, 100%, 72%);
+  border-bottom: .2em solid black;
+}
+
+.delegate {
+  background-color: hsl(207, 83%, 75%);
+  border-right: .2em solid black;
+}
+
+.delete {
+  background-color: hsl(7, 74%, 79%);
+}
+
+.bottom {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.top {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.important {
+  transform: rotate(-90deg);
+  margin: 0;
+  margin-left: -153px;
+}
+
+.notImportant {
+  transform: rotate(-90deg);
+  margin-right: -35px;
+  margin-left: -184px;
+}
+
+h3 {
+  font-size: xx-large;
+  color: white;
+  text-align: center;
+  margin-top: 0;
+}
+
+h4 {
+  font-size: xx-large;
+  color: black;
+  opacity: .5;
+  text-align: center;
+  margin: auto;
+  width: 50%;
+}
+
+ul {
+  list-style: none;
+  color: black;
+  font-size: xx-large;
+  max-height: 75%;
+  overflow-y: auto;
+  padding-left: 1em;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+li::before {
+  content: "-";
+  font-size: large;
+  color: black;
+  margin-right: 10px;
+}
+
+textarea {
+  width: 90%;
+  height: 20px;
+  color: black;
+  font-size: large;
+  background: transparent;
+  border: none;
+  resize: none;
+  margin-left: 10px;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.add-task {
+  position: absolute;
+  float: left;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+    background: grey;
+    padding: 20px;
+    border-radius: 8px;
+    width: 50%;
+    max-height: 50%;
+}
+
+.task-name-input  {
+  width: 80%;
+}
