@@ -35,6 +35,84 @@ function App() {
     }, 100);
   }, [doTasks, scheduleTasks, delegateTasks, deleteTasks]);
 
+  const usingElectron = () => {
+    return !!(typeof window !== 'undefined' && window.process && window.process.type)
+  }
+    
+  const handleSave = async () => {
+    if (usingElectron()) {
+      saveElectron();
+    } else {
+      saveBrowser();
+    }
+  }
+  
+  const handleLoad = async () => {
+    if (usingElectron()) {
+      loadElectron();
+    } else {
+      loadBrowser();
+    }
+  }
+  
+  const saveElectron = async () => {
+    const tasks = { doTasks, scheduleTasks, delegateTasks, deleteTasks };
+    const response = await ipcRenderer.invoke('save-tasks', tasks);
+    if (response.success) {
+        alert('Tasks saved successfully!');
+    }
+  }
+  
+  const loadElectron = async () => {
+    const loadedTasks = await ipcRenderer.invoke('load-tasks');
+    if (loadedTasks) {
+        setDoTasks(loadedTasks.doTasks || []);
+        setScheduleTasks(loadedTasks.scheduleTasks || []);
+        setDelegateTasks(loadedTasks.delegateTasks || []);
+        setDeleteTasks(loadedTasks.deleteTasks || []);
+    }
+  }
+  
+  const saveBrowser = () => {
+    const tasks = { doTasks, scheduleTasks, delegateTasks, deleteTasks };
+    const json = JSON.stringify(tasks, null, 2);
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "tasks.json";
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
+  
+  const loadBrowser = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.onchange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+  
+        reader.onload = (e) => {
+          try {
+            const loadedTasks = JSON.parse(e.target.result);
+            setDoTasks(loadedTasks.doTasks || []);
+            setScheduleTasks(loadedTasks.scheduleTasks || []);
+            setDelegateTasks(loadedTasks.delegateTasks || []);
+            setDeleteTasks(loadedTasks.deleteTasks || []);
+          } catch (err) {
+            alert("Failed to load tasks. Please ensure the file is valid JSON.");
+          }
+        };
+  
+        reader.readAsText(file);
+      }
+    }
+    input.click();
+  }
+    
   const Quadrant = ({ headerText, taskList, updateList }) => {
     const handleTextChange = (id, newText) => {
       updateList((prevList) =>
@@ -106,8 +184,8 @@ function App() {
         </div>
       </div>
       <div className='save-load'>
-        <button>Save to File</button>
-        <button>Load from File</button>
+        <button onClick={handleSave}>Save to File</button>
+        <button onClick={handleLoad}>Load from File</button>
       </div>
     </div>
   )
