@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './App.css';
 import NewTaskModal from './NewTaskModal';
-// import { ipcRenderer } from 'electron';
 
 function App() {
   const [doTasks, setDoTasks] = useState([
@@ -25,17 +24,23 @@ function App() {
 
   useEffect(() => {
     setElectronUser(usingElectron());
-    console.log("set electron user");
   }, []);
 
-  useEffect(() => {
-    console.log(electronUser);
-  }, [electronUser]);
-
-  useEffect(() => {
-    if (!electronUser) {
+  useEffect(async () => {
+    if (electronUser) {
+      const { ipcRenderer } = require('electron');
+      const loadedTasks = await ipcRenderer.invoke('load-tasks');
+      if (loadedTasks) {
+        setDoTasks(loadedTasks.doTasks);
+        setScheduleTasks(loadedTasks.scheduleTasks);
+        setDelegateTasks(loadedTasks.delegateTasks);
+        setDeleteTasks(loadedTasks.deleteTasks);
+        return JSON.parse(loadedTasks);
+      } else {
+        console.error('Failed to load tasks in Electron.');
+      }
+    } else {
       const savedTasks = JSON.parse(localStorage.getItem('tasks'));
-      console.log(savedTasks);
       if (savedTasks) {
         setDoTasks(savedTasks.doTasks);
         setScheduleTasks(savedTasks.scheduleTasks);
@@ -46,9 +51,18 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!electronUser) {
+    const tasks = { doTasks, scheduleTasks, delegateTasks, deleteTasks };
+    const json = JSON.stringify(tasks, null, 2);
+    if (electronUser) {
+      setTimeout(async () => {
+        const { ipcRenderer } = require('electron');
+        const result = await ipcRenderer.invoke('save-tasks', json);
+        if (!result.success) {
+          console.error('Failed to save tasks in Electron.');
+        }
+      }, 100);
+    } else {
       setTimeout(() => {
-        const tasks = { doTasks, scheduleTasks, delegateTasks, deleteTasks };
         localStorage.setItem('tasks', JSON.stringify(tasks));
       }, 100);
     }
