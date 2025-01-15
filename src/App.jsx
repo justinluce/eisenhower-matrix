@@ -105,6 +105,10 @@ function App() {
           <Quadrant headerText={'delete'} taskList={deleteTasks} updateList={setDeleteTasks} />
         </div>
       </div>
+      <div className='save-load'>
+        <button>Save to File</button>
+        <button>Load from File</button>
+      </div>
     </div>
   )
 }
