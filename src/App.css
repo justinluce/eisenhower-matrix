@@ -147,3 +147,10 @@ textarea {
 .task-name-input  {
   width: 80%;
 }
+
+.save-load {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
