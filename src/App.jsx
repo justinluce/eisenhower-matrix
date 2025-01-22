@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import './App.css';
 import NewTaskModal from './NewTaskModal';
-// import { ipcRenderer } from 'electron';
 
 function App() {
   const [doTasks, setDoTasks] = useState([
@@ -20,22 +19,28 @@ function App() {
   const [electronUser, setElectronUser] = useState(false);
   
   const usingElectron = () => {
-    return !!(typeof window !== 'undefined' && window.electronAPI)
+    return !!(typeof window !== 'undefined' && window.electronAPI);
   }
 
   useEffect(() => {
+    // Load tasks automatically
     setElectronUser(usingElectron());
-    console.log("set electron user");
-  }, []);
-
-  useEffect(() => {
-    console.log(electronUser);
-  }, [electronUser]);
-
-  useEffect(() => {
-    if (!electronUser) {
+    if (usingElectron()) {
+      async function fetchData() {
+        const loadedTasks = await window.electronAPI.autoLoad();
+        if (loadedTasks) {
+          setDoTasks(loadedTasks.doTasks);
+          setScheduleTasks(loadedTasks.scheduleTasks);
+          setDelegateTasks(loadedTasks.delegateTasks);
+          setDeleteTasks(loadedTasks.deleteTasks);
+          console.log(loadedTasks);
+        } else {
+          console.error('Failed to load tasks in Electron.');
+        }
+      }
+      fetchData();
+    } else {
       const savedTasks = JSON.parse(localStorage.getItem('tasks'));
-      console.log(savedTasks);
       if (savedTasks) {
         setDoTasks(savedTasks.doTasks);
         setScheduleTasks(savedTasks.scheduleTasks);
@@ -46,24 +51,37 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!electronUser) {
+    // Save tasks automatically
+    const tasks = { doTasks, scheduleTasks, delegateTasks, deleteTasks };
+    if (electronUser) {
+      setTimeout(async () => {
+        const result = await window.electronAPI.autoSave(tasks);
+        if (!result.success) {
+          console.error('Failed to save tasks in Electron.');
+        }
+      }, 100);
+    } else {
       setTimeout(() => {
-        const tasks = { doTasks, scheduleTasks, delegateTasks, deleteTasks };
         localStorage.setItem('tasks', JSON.stringify(tasks));
       }, 100);
     }
   }, [doTasks, scheduleTasks, delegateTasks, deleteTasks]);
     
   const handleSave = async () => {
-    const tasks = { doTasks, scheduleTasks, delegateTasks, deleteTasks }
+    const tasks = { doTasks, scheduleTasks, delegateTasks, deleteTasks };
+    const json = JSON.parse(JSON.stringify(tasks))
     if (electronUser) {
-      await window.electronAPI.saveTasks(tasks);
+      const test = await window.electronAPI.saveTasks(json);
+      if (test) {
+        console.log('aaaaaaaa');
+      }
     } else {
       saveBrowser();
     }
   }
   
   const handleLoad = async () => {
+    // Click load button
     if (electronUser) {
       const tasks = await window.electronAPI.loadTasks();
       if (tasks) {
@@ -74,23 +92,6 @@ function App() {
     }
     } else {
       loadBrowser();
-    }
-  }
-  
-  const saveElectron = async () => {
-    const response = await ipcRenderer.invoke('save-tasks', tasks);
-    if (response.success) {
-        alert('Tasks saved successfully!');
-    }
-  }
-  
-  const loadElectron = async () => {
-    const loadedTasks = await ipcRenderer.invoke('load-tasks');
-    if (loadedTasks) {
-        setDoTasks(loadedTasks.doTasks || []);
-        setScheduleTasks(loadedTasks.scheduleTasks || []);
-        setDelegateTasks(loadedTasks.delegateTasks || []);
-        setDeleteTasks(loadedTasks.deleteTasks || []);
     }
   }
   
