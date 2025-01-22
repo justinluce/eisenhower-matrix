@@ -23,7 +23,7 @@ function App() {
   }
 
   useEffect(() => {
-    // Loading tasks automatically
+    // Load tasks automatically
     setElectronUser(usingElectron());
     if (usingElectron()) {
       async function fetchData() {
@@ -68,7 +68,6 @@ function App() {
   }, [doTasks, scheduleTasks, delegateTasks, deleteTasks]);
     
   const handleSave = async () => {
-    // If they click save button
     const tasks = { doTasks, scheduleTasks, delegateTasks, deleteTasks };
     const json = JSON.parse(JSON.stringify(tasks))
     if (electronUser) {
